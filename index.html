@@ -29,9 +29,9 @@
       margin: 25px 0 15px;
     }
 
-    .admin, .cart {
+    .admin, .cart, .card {
       background: #141b34;
-      padding: 20px;
+      padding: 18px;
       border-radius: 15px;
       margin-bottom: 20px;
     }
@@ -50,16 +50,14 @@
       font-weight: bold;
     }
 
+    .hidden {
+      display: none;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 20px;
-    }
-
-    .card {
-      background: #141b34;
-      padding: 15px;
-      border-radius: 15px;
     }
 
     .card img {
@@ -90,13 +88,15 @@
       color: black;
     }
 
-    .hidden {
-      display: none;
-    }
-
     .cart-item {
       border-bottom: 1px solid #333;
       padding: 10px 0;
+    }
+
+    button:disabled {
+      background: #666;
+      color: #ddd;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -114,7 +114,7 @@
     <input id="estoque" type="number" placeholder="Estoque">
     <input id="foto" type="file" accept="image/*">
 
-    <button class="buy" onclick="addFigurinha()">Adicionar Figurinha</button>
+    <button class="buy" id="btnAdd" onclick="addFigurinha()">Adicionar Figurinha</button>
   </div>
 
   <h2>Produtos</h2>
@@ -141,13 +141,6 @@
       deleteDoc
     } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-    import {
-      getStorage,
-      ref,
-      uploadBytes,
-      getDownloadURL
-    } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-storage.js";
-
     const firebaseConfig = {
       apiKey: "AIzaSyCjHAg_zIDJAYBOplwIXUozsZkN3jivnfQ",
       authDomain: "vendas-copa-2026.firebaseapp.com",
@@ -159,7 +152,9 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const storage = getStorage(app);
+
+    const cloudName = "dvnfkmsnt";
+    const uploadPreset = "figurinhas2026";
 
     const whatsapp = "5562991606500";
 
@@ -175,12 +170,33 @@
       document.getElementById("painelAdmin").classList.remove("hidden");
     }
 
+    async function enviarImagemCloudinary(arquivo) {
+      const formData = new FormData();
+      formData.append("file", arquivo);
+      formData.append("upload_preset", uploadPreset);
+
+      const resposta = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: "POST",
+        body: formData
+      });
+
+      if (!resposta.ok) {
+        throw new Error("Erro ao enviar imagem para o Cloudinary.");
+      }
+
+      const dados = await resposta.json();
+      return dados.secure_url;
+    }
+
     window.addFigurinha = async function() {
       const codigo = document.getElementById("codigo").value.trim();
       const nome = document.getElementById("nome").value.trim();
       const preco = Number(document.getElementById("preco").value);
       const estoque = Number(document.getElementById("estoque").value);
       const foto = document.getElementById("foto").files[0];
+      const btn = document.getElementById("btnAdd");
+
+      if (!adminLogado) return;
 
       if (!codigo || !nome || !preco || estoque < 0 || !foto) {
         alert("Preencha tudo corretamente.");
@@ -188,11 +204,12 @@
       }
 
       try {
-        const nomeArquivo = `figurinhas/${Date.now()}-${foto.name}`;
-        const fotoRef = ref(storage, nomeArquivo);
+        btn.disabled = true;
+        btn.innerText = "Enviando imagem...";
 
-        await uploadBytes(fotoRef, foto);
-        const fotoURL = await getDownloadURL(fotoRef);
+        const fotoURL = await enviarImagemCloudinary(foto);
+
+        btn.innerText = "Salvando produto...";
 
         await addDoc(collection(db, "figurinhas"), {
           codigo,
@@ -212,7 +229,10 @@
         alert("Figurinha adicionada com sucesso!");
       } catch (erro) {
         console.error(erro);
-        alert("Erro ao adicionar. Veja se o Storage está ativado.");
+        alert("Erro ao cadastrar. Confere se o Upload Preset está como Unsigned.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Adicionar Figurinha";
       }
     };
 
@@ -240,7 +260,7 @@
       }
 
       figurinhas.forEach(fig => {
-        const semEstoque = fig.estoque <= 0;
+        const semEstoque = Number(fig.estoque) <= 0;
 
         lista.innerHTML += `
           <div class="card">
@@ -258,8 +278,8 @@
             ${
               adminLogado
               ? `
-                <button class="edit" onclick="baixarEstoque('${fig.id}', ${fig.estoque})">-1 estoque</button>
-                <button class="edit" onclick="aumentarEstoque('${fig.id}', ${fig.estoque})">+1 estoque</button>
+                <button class="edit" onclick="baixarEstoque('${fig.id}', ${Number(fig.estoque)})">-1 estoque</button>
+                <button class="edit" onclick="aumentarEstoque('${fig.id}', ${Number(fig.estoque)})">+1 estoque</button>
                 <button class="del" onclick="excluirProduto('${fig.id}')">Excluir</button>
               `
               : ""
@@ -276,7 +296,7 @@
 
       const qtdNoCarrinho = carrinho.filter(prod => prod.id === id).length;
 
-      if (qtdNoCarrinho >= item.estoque) {
+      if (qtdNoCarrinho >= Number(item.estoque)) {
         alert("Você já colocou a quantidade máxima disponível.");
         return;
       }
