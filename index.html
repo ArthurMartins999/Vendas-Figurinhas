@@ -6,223 +6,380 @@
   <title>Figurinhas Copa 2026</title>
 
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
     body {
       background: #0b1020;
       color: white;
-      font-family: Arial;
       padding: 20px;
     }
 
-    h1 { color: #00ff99; }
+    h1 {
+      color: #00ff99;
+      text-align: center;
+      margin-bottom: 10px;
+    }
 
-    .hidden { display: none; }
+    h2 {
+      margin: 25px 0 15px;
+    }
+
+    .admin, .cart {
+      background: #141b34;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 6px 0;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: bold;
+    }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 20px;
     }
 
     .card {
       background: #141b34;
       padding: 15px;
-      border-radius: 12px;
+      border-radius: 15px;
     }
 
-    img {
+    .card img {
       width: 100%;
-      height: 200px;
+      height: 220px;
       object-fit: cover;
+      border-radius: 12px;
+      background: #222;
     }
 
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+    .buy {
+      background: #00ff99;
+      color: black;
     }
 
-    .buy { background: #00ff99; }
-    .del { background: red; color: white; }
-    .edit { background: orange; }
-    .zap { background: #25D366; }
+    .edit {
+      background: orange;
+      color: black;
+    }
+
+    .del {
+      background: red;
+      color: white;
+    }
+
+    .zap {
+      background: #25D366;
+      color: black;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .cart-item {
+      border-bottom: 1px solid #333;
+      padding: 10px 0;
+    }
   </style>
 </head>
 
 <body>
 
-<h1>Figurinhas Copa 2026</h1>
+  <h1>Figurinhas Copa 2026</h1>
 
-<div id="painelAdmin" class="hidden">
-  <h2>Painel do dono</h2>
+  <div id="painelAdmin" class="admin hidden">
+    <h2>Painel do Dono</h2>
 
-  <input id="codigo" placeholder="Código">
-  <input id="nome" placeholder="Nome">
-  <input id="preco" type="number" placeholder="Preço">
-  <input id="estoque" type="number" placeholder="Estoque">
-  <input id="foto" type="file">
+    <input id="codigo" placeholder="Código da figurinha. Ex: BR9">
+    <input id="nome" placeholder="Nome da figurinha">
+    <input id="preco" type="number" placeholder="Preço">
+    <input id="estoque" type="number" placeholder="Estoque">
+    <input id="foto" type="file" accept="image/*">
 
-  <button onclick="addFigurinha()">Adicionar</button>
-</div>
+    <button class="buy" onclick="addFigurinha()">Adicionar Figurinha</button>
+  </div>
 
-<h2>Produtos</h2>
-<div id="lista" class="grid"></div>
+  <h2>Produtos</h2>
+  <div id="lista" class="grid"></div>
 
-<h2>Carrinho</h2>
-<div id="carrinho"></div>
-<h3 id="total"></h3>
-<button class="zap" onclick="finalizar()">Finalizar no WhatsApp</button>
+  <div class="cart">
+    <h2>Carrinho</h2>
+    <div id="carrinho"></div>
+    <h3 id="total">Total: R$ 0,00</h3>
+    <button class="zap" onclick="finalizar()">Finalizar no WhatsApp</button>
+    <button class="del" onclick="limparCarrinho()">Limpar carrinho</button>
+  </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } 
-from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCjHAg_zIDJAYBOplwIXUozsZkN3jivnfQ",
-  authDomain: "vendas-copa-2026.firebaseapp.com",
-  projectId: "vendas-copa-2026",
-  storageBucket: "vendas-copa-2026.firebasestorage.app",
-  appId: "1:879990399653:web:c0136a5651167abd31e34c"
-};
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      onSnapshot,
+      doc,
+      updateDoc,
+      deleteDoc
+    } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    import {
+      getStorage,
+      ref,
+      uploadBytes,
+      getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-storage.js";
 
-// 🔐 LINK SECRETO
-const params = new URLSearchParams(window.location.search);
-const dono = params.get("dono");
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjHAg_zIDJAYBOplwIXUozsZkN3jivnfQ",
+      authDomain: "vendas-copa-2026.firebaseapp.com",
+      projectId: "vendas-copa-2026",
+      storageBucket: "vendas-copa-2026.firebasestorage.app",
+      messagingSenderId: "879990399653",
+      appId: "1:879990399653:web:c0136a5651167abd31e34c"
+    };
 
-let adminLogado = false;
-if (dono === "arthur2026") {
-  adminLogado = true;
-  document.getElementById("painelAdmin").classList.remove("hidden");
-}
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
 
-let figurinhas = [];
-let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+    const whatsapp = "5562991606500";
 
-// ADICIONAR
-window.addFigurinha = async function() {
-  const codigo = document.getElementById("codigo").value;
-  const nome = document.getElementById("nome").value;
-  const preco = Number(document.getElementById("preco").value);
-  const estoque = Number(document.getElementById("estoque").value);
-  const foto = document.getElementById("foto").files[0];
+    let adminLogado = false;
+    let figurinhas = [];
+    let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
 
-  const reader = new FileReader();
+    const params = new URLSearchParams(window.location.search);
+    const dono = params.get("dono");
 
-  reader.onload = async function(e) {
-    await addDoc(collection(db, "figurinhas"), {
-      codigo,
-      nome,
-      preco,
-      estoque,
-      foto: e.target.result
+    if (dono === "arthur2026") {
+      adminLogado = true;
+      document.getElementById("painelAdmin").classList.remove("hidden");
+    }
+
+    window.addFigurinha = async function() {
+      const codigo = document.getElementById("codigo").value.trim();
+      const nome = document.getElementById("nome").value.trim();
+      const preco = Number(document.getElementById("preco").value);
+      const estoque = Number(document.getElementById("estoque").value);
+      const foto = document.getElementById("foto").files[0];
+
+      if (!codigo || !nome || !preco || estoque < 0 || !foto) {
+        alert("Preencha tudo corretamente.");
+        return;
+      }
+
+      try {
+        const nomeArquivo = `figurinhas/${Date.now()}-${foto.name}`;
+        const fotoRef = ref(storage, nomeArquivo);
+
+        await uploadBytes(fotoRef, foto);
+        const fotoURL = await getDownloadURL(fotoRef);
+
+        await addDoc(collection(db, "figurinhas"), {
+          codigo,
+          nome,
+          preco,
+          estoque,
+          foto: fotoURL,
+          criadoEm: new Date()
+        });
+
+        document.getElementById("codigo").value = "";
+        document.getElementById("nome").value = "";
+        document.getElementById("preco").value = "";
+        document.getElementById("estoque").value = "";
+        document.getElementById("foto").value = "";
+
+        alert("Figurinha adicionada com sucesso!");
+      } catch (erro) {
+        console.error(erro);
+        alert("Erro ao adicionar. Veja se o Storage está ativado.");
+      }
+    };
+
+    onSnapshot(collection(db, "figurinhas"), (snapshot) => {
+      figurinhas = [];
+
+      snapshot.forEach((docItem) => {
+        figurinhas.push({
+          id: docItem.id,
+          ...docItem.data()
+        });
+      });
+
+      renderizarProdutos();
+      renderizarCarrinho();
     });
-    alert("Adicionado!");
-  };
 
-  reader.readAsDataURL(foto);
-};
+    function renderizarProdutos() {
+      const lista = document.getElementById("lista");
+      lista.innerHTML = "";
 
-// LISTAR
-onSnapshot(collection(db, "figurinhas"), (snapshot) => {
-  figurinhas = [];
-  document.getElementById("lista").innerHTML = "";
+      if (figurinhas.length === 0) {
+        lista.innerHTML = "<p>Nenhuma figurinha cadastrada ainda.</p>";
+        return;
+      }
 
-  snapshot.forEach(docItem => {
-    const fig = docItem.data();
-    fig.id = docItem.id;
-    figurinhas.push(fig);
+      figurinhas.forEach(fig => {
+        const semEstoque = fig.estoque <= 0;
 
-    document.getElementById("lista").innerHTML += `
-      <div class="card">
-        <img src="${fig.foto}">
-        <h3>${fig.codigo} - ${fig.nome}</h3>
-        <p>R$ ${fig.preco}</p>
-        <p>Estoque: ${fig.estoque}</p>
+        lista.innerHTML += `
+          <div class="card">
+            <img src="${fig.foto}" alt="${fig.nome}">
+            <h3>${fig.codigo} - ${fig.nome}</h3>
+            <p><strong>R$ ${Number(fig.preco).toFixed(2)}</strong></p>
+            <p>Estoque: ${fig.estoque}</p>
 
-        <button class="buy" onclick="addCarrinho('${fig.id}')">Comprar</button>
+            ${
+              semEstoque
+              ? `<button disabled>Sem estoque</button>`
+              : `<button class="buy" onclick="addCarrinho('${fig.id}')">Adicionar ao carrinho</button>`
+            }
 
-        ${
-          adminLogado ? `
-            <button class="edit" onclick="baixar('${fig.id}', ${fig.estoque})">-1 estoque</button>
-            <button class="edit" onclick="aumentar('${fig.id}', ${fig.estoque})">+1 estoque</button>
-            <button class="del" onclick="excluir('${fig.id}')">Excluir</button>
-          ` : ""
-        }
-      </div>
-    `;
-  });
-});
+            ${
+              adminLogado
+              ? `
+                <button class="edit" onclick="baixarEstoque('${fig.id}', ${fig.estoque})">-1 estoque</button>
+                <button class="edit" onclick="aumentarEstoque('${fig.id}', ${fig.estoque})">+1 estoque</button>
+                <button class="del" onclick="excluirProduto('${fig.id}')">Excluir</button>
+              `
+              : ""
+            }
+          </div>
+        `;
+      });
+    }
 
-// ESTOQUE
-window.baixar = async function(id, estoque) {
-  if (estoque > 0) {
-    await updateDoc(doc(db, "figurinhas", id), {
-      estoque: estoque - 1
-    });
-  }
-};
+    window.addCarrinho = function(id) {
+      const item = figurinhas.find(fig => fig.id === id);
 
-window.aumentar = async function(id, estoque) {
-  await updateDoc(doc(db, "figurinhas", id), {
-    estoque: estoque + 1
-  });
-};
+      if (!item) return;
 
-window.excluir = async function(id) {
-  await deleteDoc(doc(db, "figurinhas", id));
-};
+      const qtdNoCarrinho = carrinho.filter(prod => prod.id === id).length;
 
-// CARRINHO
-window.addCarrinho = function(id) {
-  const item = figurinhas.find(f => f.id === id);
-  carrinho.push(item);
-  localStorage.setItem("carrinho", JSON.stringify(carrinho));
-  renderCarrinho();
-};
+      if (qtdNoCarrinho >= item.estoque) {
+        alert("Você já colocou a quantidade máxima disponível.");
+        return;
+      }
 
-function renderCarrinho() {
-  let total = 0;
-  const area = document.getElementById("carrinho");
-  area.innerHTML = "";
+      carrinho.push(item);
+      salvarCarrinho();
+      renderizarCarrinho();
+    };
 
-  carrinho.forEach((item,i) => {
-    total += item.preco;
+    function salvarCarrinho() {
+      localStorage.setItem("carrinho", JSON.stringify(carrinho));
+    }
 
-    area.innerHTML += `
-      <p>${item.nome} - R$ ${item.preco}</p>
-      <button onclick="remover(${i})">Remover</button>
-    `;
-  });
+    function renderizarCarrinho() {
+      const area = document.getElementById("carrinho");
+      const totalArea = document.getElementById("total");
 
-  document.getElementById("total").innerText = "Total: R$ " + total;
-}
+      area.innerHTML = "";
+      let total = 0;
 
-window.remover = function(i) {
-  carrinho.splice(i,1);
-  localStorage.setItem("carrinho", JSON.stringify(carrinho));
-  renderCarrinho();
-};
+      if (carrinho.length === 0) {
+        area.innerHTML = "<p>Seu carrinho está vazio.</p>";
+      }
 
-// WHATS
-window.finalizar = function() {
-  let msg = "Quero comprar:%0A";
+      carrinho.forEach((item, index) => {
+        total += Number(item.preco);
 
-  carrinho.forEach(item => {
-    msg += `${item.nome} - R$ ${item.preco}%0A`;
-  });
+        area.innerHTML += `
+          <div class="cart-item">
+            <p><strong>${item.codigo}</strong> - ${item.nome}</p>
+            <p>R$ ${Number(item.preco).toFixed(2)}</p>
+            <button class="del" onclick="removerCarrinho(${index})">Remover</button>
+          </div>
+        `;
+      });
 
-  window.open(`https://wa.me/5562991606500?text=${msg}`);
-};
+      totalArea.innerText = `Total: R$ ${total.toFixed(2)}`;
+    }
 
-renderCarrinho();
+    window.removerCarrinho = function(index) {
+      carrinho.splice(index, 1);
+      salvarCarrinho();
+      renderizarCarrinho();
+    };
 
-</script>
+    window.limparCarrinho = function() {
+      carrinho = [];
+      salvarCarrinho();
+      renderizarCarrinho();
+    };
+
+    window.baixarEstoque = async function(id, estoqueAtual) {
+      if (!adminLogado) return;
+
+      if (estoqueAtual <= 0) {
+        alert("Estoque já está zerado.");
+        return;
+      }
+
+      await updateDoc(doc(db, "figurinhas", id), {
+        estoque: estoqueAtual - 1
+      });
+    };
+
+    window.aumentarEstoque = async function(id, estoqueAtual) {
+      if (!adminLogado) return;
+
+      await updateDoc(doc(db, "figurinhas", id), {
+        estoque: estoqueAtual + 1
+      });
+    };
+
+    window.excluirProduto = async function(id) {
+      if (!adminLogado) return;
+
+      const confirmar = confirm("Deseja excluir esse produto?");
+
+      if (confirmar) {
+        await deleteDoc(doc(db, "figurinhas", id));
+      }
+    };
+
+    window.finalizar = function() {
+      if (carrinho.length === 0) {
+        alert("Adicione algo ao carrinho.");
+        return;
+      }
+
+      let msg = "Olá! Quero comprar essas figurinhas da Copa 2026:%0A%0A";
+      let total = 0;
+
+      carrinho.forEach(item => {
+        msg += `- ${item.codigo} - ${item.nome} | R$ ${Number(item.preco).toFixed(2)}%0A`;
+        total += Number(item.preco);
+      });
+
+      msg += `%0ATotal: R$ ${total.toFixed(2)}`;
+
+      window.open(`https://wa.me/${whatsapp}?text=${msg}`, "_blank");
+    };
+
+    renderizarCarrinho();
+  </script>
 
 </body>
 </html>
