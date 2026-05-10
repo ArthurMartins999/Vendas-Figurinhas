@@ -1,405 +1,1411 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Figurinhas Copa 2026</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figurinhas Copa 2026</title>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
+<link rel="icon" href="logo.png">
 
-    body {
-      background: #0b1020;
-      color: white;
-      padding: 20px;
-    }
+<style>
 
-    h1 {
-      color: #00ff99;
-      text-align: center;
-      margin-bottom: 10px;
-    }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
 
-    h2 {
-      margin: 25px 0 15px;
-    }
+html{
+scroll-behavior:smooth;
+}
 
-    .admin, .cart, .card {
-      background: #141b34;
-      padding: 18px;
-      border-radius: 15px;
-      margin-bottom: 20px;
-    }
+body{
+background:
+radial-gradient(circle at top,#0b7d37,#020202 45%);
+color:white;
+overflow-x:hidden;
+}
 
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 6px 0;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-    }
+/* HEADER */
 
-    button {
-      cursor: pointer;
-      font-weight: bold;
-    }
+header{
+position:sticky;
+top:0;
+z-index:999;
+background:rgba(0,0,0,.8);
+backdrop-filter:blur(10px);
+border-bottom:1px solid #1fff6b40;
+padding:15px;
+}
 
-    .hidden {
-      display: none;
-    }
+.header{
+max-width:1400px;
+margin:auto;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:15px;
+flex-wrap:wrap;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-    }
+.logoArea{
+display:flex;
+align-items:center;
+gap:12px;
+}
 
-    .card img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      border-radius: 12px;
-      background: #222;
-    }
+.logoArea img{
+width:65px;
+height:65px;
+object-fit:contain;
+filter:drop-shadow(0 0 12px gold);
+}
 
-    .buy {
-      background: #00ff99;
-      color: black;
-    }
+.logoArea h1{
+font-size:24px;
+font-weight:900;
+}
 
-    .edit {
-      background: orange;
-      color: black;
-    }
+.logoArea span{
+color:#1fff6b;
+}
 
-    .del {
-      background: red;
-      color: white;
-    }
+.search{
+flex:1;
+min-width:250px;
+max-width:500px;
+}
 
-    .zap {
-      background: #25D366;
-      color: black;
-    }
+.search input{
+width:100%;
+padding:14px;
+border:none;
+outline:none;
+border-radius:14px;
+background:#111;
+border:2px solid #1fff6b;
+color:white;
+font-size:15px;
+}
 
-    .cart-item {
-      border-bottom: 1px solid #333;
-      padding: 10px 0;
-    }
+.buttons{
+display:flex;
+gap:10px;
+}
 
-    button:disabled {
-      background: #666;
-      color: #ddd;
-      cursor: not-allowed;
-    }
-  </style>
+.cartBtn,
+.adminBtn{
+padding:13px 18px;
+border:none;
+border-radius:14px;
+background:
+linear-gradient(45deg,#1fff6b,gold);
+font-weight:900;
+cursor:pointer;
+transition:.3s;
+}
+
+.cartBtn:hover,
+.adminBtn:hover{
+transform:scale(1.05);
+}
+
+/* HERO */
+
+.hero{
+text-align:center;
+padding:50px 20px;
+}
+
+.hero img{
+width:220px;
+max-width:90%;
+object-fit:contain;
+filter:drop-shadow(0 0 25px gold);
+animation:float 4s ease-in-out infinite;
+}
+
+@keyframes float{
+50%{
+transform:translateY(-15px);
+}
+}
+
+.hero h2{
+font-size:55px;
+margin:20px 0;
+font-weight:900;
+text-shadow:0 0 20px #1fff6b;
+}
+
+.hero p{
+max-width:750px;
+margin:auto;
+line-height:1.7;
+color:#ddd;
+font-size:17px;
+}
+
+/* FILTERS */
+
+.filters{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+justify-content:center;
+padding:20px;
+}
+
+.filters button{
+padding:10px 14px;
+border:none;
+border-radius:12px;
+background:#111;
+border:1px solid #1fff6b40;
+color:white;
+font-weight:700;
+cursor:pointer;
+transition:.3s;
+}
+
+.filters button:hover,
+.filters button.active{
+background:
+linear-gradient(45deg,#1fff6b,gold);
+color:black;
+}
+
+/* PRODUCTS */
+
+.products{
+max-width:1400px;
+margin:auto;
+padding:25px;
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(240px,1fr));
+gap:22px;
+}
+
+/* CARD */
+
+.card{
+background:
+linear-gradient(180deg,#111,#030303);
+border:1px solid #1fff6b30;
+border-radius:22px;
+overflow:hidden;
+transition:.3s;
+position:relative;
+display:flex;
+flex-direction:column;
+}
+
+.card:hover{
+transform:translateY(-8px);
+box-shadow:0 0 30px #1fff6b40;
+}
+
+.badge{
+position:absolute;
+top:12px;
+right:12px;
+background:gold;
+color:black;
+padding:6px 12px;
+border-radius:999px;
+font-size:12px;
+font-weight:900;
+z-index:2;
+}
+
+/* IMAGEM PROPORCIONAL */
+
+.card-image{
+width:100%;
+aspect-ratio:3/4;
+overflow:hidden;
+background:#111;
+}
+
+.card-image img{
+width:100%;
+height:100%;
+object-fit:cover;
+display:block;
+transition:.4s;
+}
+
+.card:hover .card-image img{
+transform:scale(1.05);
+}
+
+.info{
+padding:18px;
+display:flex;
+flex-direction:column;
+flex:1;
+}
+
+.country{
+color:#1fff6b;
+font-weight:900;
+margin-bottom:8px;
+font-size:14px;
+}
+
+.info h3{
+font-size:24px;
+margin-bottom:10px;
+}
+
+.price{
+font-size:28px;
+font-weight:900;
+color:gold;
+margin-bottom:10px;
+}
+
+.stock{
+color:#aaa;
+margin-bottom:20px;
+}
+
+.info button{
+margin-top:auto;
+padding:14px;
+border:none;
+border-radius:14px;
+background:
+linear-gradient(45deg,#1fff6b,gold);
+font-weight:900;
+cursor:pointer;
+transition:.3s;
+}
+
+.info button:hover{
+transform:scale(1.03);
+}
+
+/* MODALS */
+
+.cart,
+.admin{
+position:fixed;
+top:0;
+right:-100%;
+width:420px;
+max-width:100%;
+height:100%;
+background:#050505;
+z-index:99999;
+transition:.4s;
+padding:25px;
+overflow-y:auto;
+border-left:2px solid #1fff6b;
+}
+
+.cart.active,
+.admin.active{
+right:0;
+}
+
+.close{
+position:absolute;
+top:18px;
+right:18px;
+width:45px;
+height:45px;
+border:none;
+border-radius:50%;
+background:
+linear-gradient(45deg,#1fff6b,gold);
+font-size:22px;
+font-weight:900;
+cursor:pointer;
+}
+
+.cart h2,
+.admin h2{
+color:#1fff6b;
+margin-bottom:25px;
+}
+
+.item{
+background:#111;
+padding:14px;
+border-radius:14px;
+margin-bottom:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+}
+
+.item button{
+padding:6px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+.total{
+font-size:28px;
+font-weight:900;
+color:gold;
+margin-top:20px;
+}
+
+select,
+input{
+width:100%;
+padding:14px;
+margin-top:12px;
+border-radius:14px;
+border:1px solid #1fff6b40;
+background:#111;
+color:white;
+}
+
+input[type="file"]{
+padding:12px;
+}
+
+.preview{
+width:100%;
+aspect-ratio:3/4;
+object-fit:cover;
+border-radius:16px;
+margin-top:15px;
+border:1px solid #1fff6b40;
+background:#111;
+}
+
+.finish,
+.save{
+width:100%;
+padding:16px;
+margin-top:18px;
+border:none;
+border-radius:16px;
+background:
+linear-gradient(45deg,#1fff6b,gold);
+font-weight:900;
+font-size:17px;
+cursor:pointer;
+}
+
+.small{
+font-size:13px;
+color:#aaa;
+margin-top:8px;
+}
+
+/* FOOTER */
+
+footer{
+text-align:center;
+padding:40px 20px;
+background:black;
+margin-top:50px;
+border-top:1px solid #1fff6b30;
+color:#aaa;
+}
+
+/* RESPONSIVIDADE */
+
+@media(max-width:900px){
+
+.hero h2{
+font-size:38px;
+}
+
+.products{
+grid-template-columns:
+repeat(auto-fit,minmax(190px,1fr));
+}
+
+}
+
+@media(max-width:600px){
+
+.logoArea h1{
+font-size:18px;
+}
+
+.hero h2{
+font-size:30px;
+}
+
+.hero p{
+font-size:15px;
+}
+
+.products{
+padding:15px;
+grid-template-columns:
+repeat(2,1fr);
+gap:15px;
+}
+
+.card{
+border-radius:18px;
+}
+
+.info{
+padding:12px;
+}
+
+.info h3{
+font-size:18px;
+}
+
+.price{
+font-size:22px;
+}
+
+.card-image{
+aspect-ratio:3/4;
+}
+
+.buttons{
+width:100%;
+justify-content:space-between;
+}
+
+.cart,
+.admin{
+width:100%;
+}
+
+}
+
+</style>
 </head>
 
 <body>
 
-  <h1>Figurinhas Copa 2026</h1>
-
-  <div id="painelAdmin" class="admin hidden">
-    <h2>Painel do Dono</h2>
-
-    <input id="codigo" placeholder="Código da figurinha. Ex: BR9">
-    <input id="nome" placeholder="Nome da figurinha">
-    <input id="preco" type="number" placeholder="Preço">
-    <input id="estoque" type="number" placeholder="Estoque">
-    <input id="foto" type="file" accept="image/*">
-
-    <button class="buy" id="btnAdd" onclick="addFigurinha()">Adicionar Figurinha</button>
-  </div>
-
-  <h2>Produtos</h2>
-  <div id="lista" class="grid"></div>
-
-  <div class="cart">
-    <h2>Carrinho</h2>
-    <div id="carrinho"></div>
-    <h3 id="total">Total: R$ 0,00</h3>
-    <button class="zap" onclick="finalizar()">Finalizar no WhatsApp</button>
-    <button class="del" onclick="limparCarrinho()">Limpar carrinho</button>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      onSnapshot,
-      doc,
-      updateDoc,
-      deleteDoc
-    } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCjHAg_zIDJAYBOplwIXUozsZkN3jivnfQ",
-      authDomain: "vendas-copa-2026.firebaseapp.com",
-      projectId: "vendas-copa-2026",
-      storageBucket: "vendas-copa-2026.firebasestorage.app",
-      messagingSenderId: "879990399653",
-      appId: "1:879990399653:web:c0136a5651167abd31e34c"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const cloudName = "dvnfkmsnt";
-    const uploadPreset = "figurinhas2026";
-
-    const whatsapp = "5562991606500";
-
-    let adminLogado = false;
-    let figurinhas = [];
-    let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
-
-    const params = new URLSearchParams(window.location.search);
-    const dono = params.get("dono");
-
-    if (dono === "arthur2026") {
-      adminLogado = true;
-      document.getElementById("painelAdmin").classList.remove("hidden");
-    }
-
-    async function enviarImagemCloudinary(arquivo) {
-      const formData = new FormData();
-      formData.append("file", arquivo);
-      formData.append("upload_preset", uploadPreset);
-
-      const resposta = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: "POST",
-        body: formData
-      });
-
-      if (!resposta.ok) {
-        throw new Error("Erro ao enviar imagem para o Cloudinary.");
-      }
-
-      const dados = await resposta.json();
-      return dados.secure_url;
-    }
-
-    window.addFigurinha = async function() {
-      const codigo = document.getElementById("codigo").value.trim();
-      const nome = document.getElementById("nome").value.trim();
-      const preco = Number(document.getElementById("preco").value);
-      const estoque = Number(document.getElementById("estoque").value);
-      const foto = document.getElementById("foto").files[0];
-      const btn = document.getElementById("btnAdd");
-
-      if (!adminLogado) return;
-
-      if (!codigo || !nome || !preco || estoque < 0 || !foto) {
-        alert("Preencha tudo corretamente.");
-        return;
-      }
-
-      try {
-        btn.disabled = true;
-        btn.innerText = "Enviando imagem...";
-
-        const fotoURL = await enviarImagemCloudinary(foto);
-
-        btn.innerText = "Salvando produto...";
-
-        await addDoc(collection(db, "figurinhas"), {
-          codigo,
-          nome,
-          preco,
-          estoque,
-          foto: fotoURL,
-          criadoEm: new Date()
-        });
-
-        document.getElementById("codigo").value = "";
-        document.getElementById("nome").value = "";
-        document.getElementById("preco").value = "";
-        document.getElementById("estoque").value = "";
-        document.getElementById("foto").value = "";
-
-        alert("Figurinha adicionada com sucesso!");
-      } catch (erro) {
-        console.error(erro);
-        alert("Erro ao cadastrar. Confere se o Upload Preset está como Unsigned.");
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "Adicionar Figurinha";
-      }
-    };
-
-    onSnapshot(collection(db, "figurinhas"), (snapshot) => {
-      figurinhas = [];
-
-      snapshot.forEach((docItem) => {
-        figurinhas.push({
-          id: docItem.id,
-          ...docItem.data()
-        });
-      });
-
-      renderizarProdutos();
-      renderizarCarrinho();
-    });
-
-    function renderizarProdutos() {
-      const lista = document.getElementById("lista");
-      lista.innerHTML = "";
-
-      if (figurinhas.length === 0) {
-        lista.innerHTML = "<p>Nenhuma figurinha cadastrada ainda.</p>";
-        return;
-      }
-
-      figurinhas.forEach(fig => {
-        const semEstoque = Number(fig.estoque) <= 0;
-
-        lista.innerHTML += `
-          <div class="card">
-            <img src="${fig.foto}" alt="${fig.nome}">
-            <h3>${fig.codigo} - ${fig.nome}</h3>
-            <p><strong>R$ ${Number(fig.preco).toFixed(2)}</strong></p>
-            <p>Estoque: ${fig.estoque}</p>
-
-            ${
-              semEstoque
-              ? `<button disabled>Sem estoque</button>`
-              : `<button class="buy" onclick="addCarrinho('${fig.id}')">Adicionar ao carrinho</button>`
-            }
-
-            ${
-              adminLogado
-              ? `
-                <button class="edit" onclick="baixarEstoque('${fig.id}', ${Number(fig.estoque)})">-1 estoque</button>
-                <button class="edit" onclick="aumentarEstoque('${fig.id}', ${Number(fig.estoque)})">+1 estoque</button>
-                <button class="del" onclick="excluirProduto('${fig.id}')">Excluir</button>
-              `
-              : ""
-            }
-          </div>
-        `;
-      });
-    }
-
-    window.addCarrinho = function(id) {
-      const item = figurinhas.find(fig => fig.id === id);
-
-      if (!item) return;
-
-      const qtdNoCarrinho = carrinho.filter(prod => prod.id === id).length;
-
-      if (qtdNoCarrinho >= Number(item.estoque)) {
-        alert("Você já colocou a quantidade máxima disponível.");
-        return;
-      }
-
-      carrinho.push(item);
-      salvarCarrinho();
-      renderizarCarrinho();
-    };
-
-    function salvarCarrinho() {
-      localStorage.setItem("carrinho", JSON.stringify(carrinho));
-    }
-
-    function renderizarCarrinho() {
-      const area = document.getElementById("carrinho");
-      const totalArea = document.getElementById("total");
-
-      area.innerHTML = "";
-      let total = 0;
-
-      if (carrinho.length === 0) {
-        area.innerHTML = "<p>Seu carrinho está vazio.</p>";
-      }
-
-      carrinho.forEach((item, index) => {
-        total += Number(item.preco);
-
-        area.innerHTML += `
-          <div class="cart-item">
-            <p><strong>${item.codigo}</strong> - ${item.nome}</p>
-            <p>R$ ${Number(item.preco).toFixed(2)}</p>
-            <button class="del" onclick="removerCarrinho(${index})">Remover</button>
-          </div>
-        `;
-      });
-
-      totalArea.innerText = `Total: R$ ${total.toFixed(2)}`;
-    }
-
-    window.removerCarrinho = function(index) {
-      carrinho.splice(index, 1);
-      salvarCarrinho();
-      renderizarCarrinho();
-    };
-
-    window.limparCarrinho = function() {
-      carrinho = [];
-      salvarCarrinho();
-      renderizarCarrinho();
-    };
-
-    window.baixarEstoque = async function(id, estoqueAtual) {
-      if (!adminLogado) return;
-
-      if (estoqueAtual <= 0) {
-        alert("Estoque já está zerado.");
-        return;
-      }
-
-      await updateDoc(doc(db, "figurinhas", id), {
-        estoque: estoqueAtual - 1
-      });
-    };
-
-    window.aumentarEstoque = async function(id, estoqueAtual) {
-      if (!adminLogado) return;
-
-      await updateDoc(doc(db, "figurinhas", id), {
-        estoque: estoqueAtual + 1
-      });
-    };
-
-    window.excluirProduto = async function(id) {
-      if (!adminLogado) return;
-
-      const confirmar = confirm("Deseja excluir esse produto?");
-
-      if (confirmar) {
-        await deleteDoc(doc(db, "figurinhas", id));
-      }
-    };
-
-    window.finalizar = function() {
-      if (carrinho.length === 0) {
-        alert("Adicione algo ao carrinho.");
-        return;
-      }
-
-      let msg = "Olá! Quero comprar essas figurinhas da Copa 2026:%0A%0A";
-      let total = 0;
-
-      carrinho.forEach(item => {
-        msg += `- ${item.codigo} - ${item.nome} | R$ ${Number(item.preco).toFixed(2)}%0A`;
-        total += Number(item.preco);
-      });
-
-      msg += `%0ATotal: R$ ${total.toFixed(2)}`;
-
-      window.open(`https://wa.me/${whatsapp}?text=${msg}`, "_blank");
-    };
-
-    renderizarCarrinho();
-  </script>
+<header>
+
+<div class="header">
+
+<div class="logoArea">
+<img src="logo.png">
+<h1>Figurinhas <span>Copa 2026</span></h1>
+</div>
+
+<div class="search">
+<input
+id="searchInput"
+placeholder="Pesquisar figurinha..."
+>
+</div>
+
+<div class="buttons">
+<button
+class="adminBtn"
+onclick="openAdmin()">
+Admin
+</button>
+
+<button
+class="cartBtn"
+onclick="toggleCart()">
+🛒 Carrinho
+</button>
+</div>
+
+</div>
+
+</header>
+
+<section class="hero">
+
+<img src="logo.png">
+
+<h2>
+Colecione • Troque • Complete
+</h2>
+
+<p>
+Compre suas figurinhas da Copa 2026,
+monte seu carrinho e finalize tudo
+pelo WhatsApp.
+</p>
+
+</section>
+
+<div
+class="filters"
+id="filters">
+</div>
+
+<section
+class="products"
+id="products">
+</section>
+
+<!-- CARRINHO -->
+
+<div class="cart" id="cart">
+
+<button
+class="close"
+onclick="closeCart()">
+×
+</button>
+
+<h2>Seu Carrinho</h2>
+
+<div id="cartItems"></div>
+
+<div class="total" id="total">
+Total: R$ 0
+</div>
+
+<select id="payment">
+<option>PIX</option>
+<option>Dinheiro</option>
+</select>
+
+<select id="school">
+<option>Expressão Junior</option>
+<option>Expressão Médio</option>
+</select>
+
+<button
+class="finish"
+onclick="finishOrder()">
+Finalizar Pedido
+</button>
+
+</div>
+
+<!-- ADMIN -->
+
+<div class="admin" id="admin">
+
+<button
+class="close"
+onclick="closeAdmin()">
+×
+</button>
+
+<h2>Painel Admin</h2>
+
+<input
+id="adminName"
+placeholder="Nome da figurinha"
+>
+
+<input
+id="adminCode"
+placeholder="Código"
+>
+
+<select id="adminCountry"></select>
+
+<input
+id="adminPrice"
+type="number"
+placeholder="Preço"
+>
+
+<input
+id="adminStock"
+type="number"
+placeholder="Estoque"
+>
+
+<select id="adminRarity">
+<option>COMUM</option>
+<option>RARA</option>
+<option>ULTRA</option>
+<option>LENDÁRIA</option>
+</select>
+
+<input
+type="file"
+id="imageFile"
+accept="image/*"
+>
+
+<p class="small">
+Selecionar imagem do celular ou PC
+</p>
+
+<img
+id="imagePreview"
+class="preview"
+src="logo.png"
+>
+
+<button
+class="save"
+onclick="addSticker()">
+Salvar Figurinha
+</button>
+
+<div
+id="adminList"
+style="margin-top:25px;">
+</div>
+
+</div>
+
+<footer>
+
+© 2026 - Figurinhas Copa 2026
+<br><br>
+Dev: Arthur Martins
+
+</footer>
+
+<script type="module">
+
+import {
+initializeApp
+} from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+push,
+set,
+onValue,
+remove,
+update
+} from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+/* FIREBASE */
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyCjHAg_zIDJAYBOplwIXUozsZkN3jivnfQ",
+
+authDomain:
+"vendas-copa-2026.firebaseapp.com",
+
+databaseURL:
+"https://vendas-copa-2026-default-rtdb.firebaseio.com",
+
+projectId:
+"vendas-copa-2026",
+
+storageBucket:
+"vendas-copa-2026.firebasestorage.app",
+
+messagingSenderId:
+"879990399653",
+
+appId:
+"1:879990399653:web:c0136a5651167abd31e34c"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
+
+/* CLOUDINARY */
+
+const CLOUD_NAME =
+"dvnfkmsnt";
+
+const UPLOAD_PRESET =
+"figurinhas2026";
+
+/* SENHA ADMIN */
+
+const ADMIN_PASSWORD =
+"arthur2026";
+
+/* DADOS */
+
+let stickers = [];
+
+let cart = [];
+
+let currentFilter = "Todos";
+
+/* PAÍSES */
+
+const countries = [
+
+"Todos",
+
+"Brasil 🇧🇷",
+"Argentina 🇦🇷",
+"Portugal 🇵🇹",
+"França 🇫🇷",
+"Alemanha 🇩🇪",
+"Espanha 🇪🇸",
+"Inglaterra 🏴",
+"Itália 🇮🇹",
+"Croácia 🇭🇷",
+"Uruguai 🇺🇾",
+"Japão 🇯🇵",
+"Canadá 🇨🇦",
+"México 🇲🇽",
+"Estados Unidos 🇺🇸"
+
+];
+
+/* FILTERS */
+
+function loadFilters(){
+
+const filters =
+document.getElementById("filters");
+
+filters.innerHTML = "";
+
+countries.forEach(country=>{
+
+const btn =
+document.createElement("button");
+
+btn.textContent = country;
+
+if(country === currentFilter){
+
+btn.classList.add("active");
+
+}
+
+btn.onclick = ()=>{
+
+currentFilter = country;
+
+loadFilters();
+
+renderProducts();
+
+};
+
+filters.appendChild(btn);
+
+});
+
+/* ADMIN SELECT */
+
+const select =
+document.getElementById(
+"adminCountry"
+);
+
+select.innerHTML = "";
+
+countries
+.filter(c=>c !== "Todos")
+.forEach(country=>{
+
+select.innerHTML += `
+<option value="${country}">
+${country}
+</option>
+`;
+
+});
+
+}
+
+/* DATABASE */
+
+const stickersRef =
+ref(db,"figurinhas");
+
+onValue(stickersRef,snapshot=>{
+
+stickers = [];
+
+const data =
+snapshot.val();
+
+if(data){
+
+Object.entries(data)
+.forEach(([id,item])=>{
+
+stickers.push({
+firebaseId:id,
+...item
+});
+
+});
+
+}
+
+renderProducts();
+
+renderAdminList();
+
+});
+
+/* RENDER */
+
+function renderProducts(){
+
+const products =
+document.getElementById("products");
+
+const search =
+document
+.getElementById("searchInput")
+.value
+.toLowerCase();
+
+products.innerHTML = "";
+
+const filtered =
+stickers
+
+.filter(s=>
+
+currentFilter === "Todos"
+
+||
+
+s.country === currentFilter
+
+)
+
+.filter(s=>
+
+(s.name || "")
+.toLowerCase()
+.includes(search)
+
+||
+
+(s.code || "")
+.toLowerCase()
+.includes(search)
+
+);
+
+if(filtered.length === 0){
+
+products.innerHTML = `
+<p>Nenhuma figurinha cadastrada.</p>
+`;
+
+return;
+
+}
+
+filtered.forEach(s=>{
+
+products.innerHTML += `
+
+<div class="card">
+
+<div class="badge">
+${s.rarity}
+</div>
+
+<div class="card-image">
+
+<img
+src="${s.image}"
+onerror="this.src='logo.png'"
+>
+
+</div>
+
+<div class="info">
+
+<div class="country">
+${s.country}
+</div>
+
+<h3>${s.name}</h3>
+
+<p>${s.code}</p>
+
+<div class="price">
+R$ ${Number(s.price)
+.toFixed(2)
+.replace(".",",")}
+</div>
+
+<div class="stock">
+Estoque: ${s.stock}
+</div>
+
+<button
+onclick="addToCart(
+'${s.firebaseId}'
+)">
+Adicionar
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+/* CLOUDINARY */
+
+async function uploadToCloudinary(file){
+
+const formData =
+new FormData();
+
+formData.append("file",file);
+
+formData.append(
+"upload_preset",
+UPLOAD_PRESET
+);
+
+const response =
+await fetch(
+
+`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+
+{
+method:"POST",
+body:formData
+}
+
+);
+
+const data =
+await response.json();
+
+return data.secure_url;
+
+}
+
+/* ADD */
+
+window.addSticker =
+async function(){
+
+const name =
+document
+.getElementById("adminName")
+.value;
+
+const code =
+document
+.getElementById("adminCode")
+.value;
+
+const country =
+document
+.getElementById("adminCountry")
+.value;
+
+const price =
+Number(
+document
+.getElementById("adminPrice")
+.value
+);
+
+const stock =
+Number(
+document
+.getElementById("adminStock")
+.value
+);
+
+const rarity =
+document
+.getElementById("adminRarity")
+.value;
+
+const file =
+document
+.getElementById("imageFile")
+.files[0];
+
+if(!name || !code){
+
+alert("Preencha os dados");
+
+return;
+
+}
+
+let imageUrl = "";
+
+if(file){
+
+alert("Enviando imagem...");
+
+imageUrl =
+await uploadToCloudinary(file);
+
+}
+
+const newSticker =
+push(stickersRef);
+
+set(newSticker,{
+
+name,
+code,
+country,
+price,
+stock,
+rarity,
+image:imageUrl
+
+});
+
+alert("Figurinha adicionada!");
+
+};
+
+/* ADMIN LIST */
+
+function renderAdminList(){
+
+const list =
+document.getElementById(
+"adminList"
+);
+
+list.innerHTML = "";
+
+stickers.forEach(s=>{
+
+list.innerHTML += `
+
+<div class="item">
+
+<span>
+${s.code} - ${s.name}
+</span>
+
+<div>
+
+<button
+onclick="
+changeStock(
+'${s.firebaseId}',
+${s.stock}
+)
+">
+📦
+</button>
+
+<button
+onclick="
+deleteSticker(
+'${s.firebaseId}'
+)
+">
+🗑️
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+/* DELETE */
+
+window.deleteSticker =
+function(id){
+
+if(confirm("Apagar?")){
+
+remove(
+ref(
+db,
+"figurinhas/"+id
+)
+);
+
+}
+
+};
+
+/* STOCK */
+
+window.changeStock =
+function(id,stock){
+
+const newStock =
+prompt(
+"Novo estoque:",
+stock
+);
+
+if(newStock !== null){
+
+update(
+ref(
+db,
+"figurinhas/"+id
+),
+{
+stock:Number(newStock)
+}
+);
+
+}
+
+};
+
+/* CART */
+
+window.addToCart =
+function(id){
+
+const sticker =
+stickers.find(
+s=>s.firebaseId === id
+);
+
+if(!sticker){
+
+return;
+
+}
+
+cart.push(sticker);
+
+renderCart();
+
+document
+.getElementById("cart")
+.classList.add("active");
+
+};
+
+function renderCart(){
+
+const box =
+document.getElementById(
+"cartItems"
+);
+
+const totalBox =
+document.getElementById(
+"total"
+);
+
+box.innerHTML = "";
+
+let total = 0;
+
+cart.forEach((item,index)=>{
+
+total += Number(item.price);
+
+box.innerHTML += `
+
+<div class="item">
+
+<span>
+${item.name}
+</span>
+
+<div>
+
+R$
+${Number(item.price)
+.toFixed(2)
+.replace(".",",")}
+
+<button
+onclick="
+removeItem(${index})
+">
+🗑️
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+totalBox.innerHTML =
+`Total: R$ ${total
+.toFixed(2)
+.replace(".",",")}`;
+
+}
+
+window.removeItem =
+function(index){
+
+cart.splice(index,1);
+
+renderCart();
+
+};
+
+/* WHATS */
+
+window.finishOrder =
+function(){
+
+if(cart.length === 0){
+
+alert("Carrinho vazio");
+
+return;
+
+}
+
+const payment =
+document
+.getElementById("payment")
+.value;
+
+const school =
+document
+.getElementById("school")
+.value;
+
+let total = 0;
+
+let message =
+"Olá Arthur! Quero comprar:%0A%0A";
+
+cart.forEach(item=>{
+
+total += Number(item.price);
+
+message +=
+`${item.code} - ${item.name} - R$ ${item.price}%0A`;
+
+});
+
+message +=
+`%0ATotal: R$ ${total}`;
+
+message +=
+`%0APagamento: ${payment}`;
+
+message +=
+`%0AEscola: ${school}`;
+
+window.open(
+
+`https://wa.me/5562991606500?text=${message}`,
+
+"_blank"
+
+);
+
+};
+
+/* MODALS */
+
+window.toggleCart =
+()=>{
+
+document
+.getElementById("cart")
+.classList.toggle("active");
+
+};
+
+window.closeCart =
+()=>{
+
+document
+.getElementById("cart")
+.classList.remove("active");
+
+};
+
+/* ADMIN PASSWORD */
+
+window.openAdmin =
+()=>{
+
+const password =
+prompt("Senha admin:");
+
+if(password !== ADMIN_PASSWORD){
+
+alert("Senha incorreta");
+
+return;
+
+}
+
+document
+.getElementById("admin")
+.classList.add("active");
+
+};
+
+window.closeAdmin =
+()=>{
+
+document
+.getElementById("admin")
+.classList.remove("active");
+
+};
+
+/* SEARCH */
+
+document
+.getElementById("searchInput")
+.addEventListener(
+"input",
+renderProducts
+);
+
+/* PREVIEW */
+
+document
+.getElementById("imageFile")
+.addEventListener(
+"change",
+function(){
+
+const file =
+this.files[0];
+
+if(file){
+
+document
+.getElementById(
+"imagePreview"
+)
+.src =
+URL.createObjectURL(file);
+
+}
+
+}
+);
+
+/* START */
+
+loadFilters();
+
+</script>
 
 </body>
 </html>
